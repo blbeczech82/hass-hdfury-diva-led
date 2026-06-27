@@ -1,0 +1,10 @@
+{
+  "domain": "hdfury_diva_led",
+  "name": "HDFury DIVA LED",
+  "codeowners": ["@blbeczech82"],
+  "config_flow": true,
+  "documentation": "https://github.com/blbeczech82/hass-hdfury-diva-led",
+  "iot_class": "local_polling",
+  "requirements": [],
+  "version": "0.1.0"
+}

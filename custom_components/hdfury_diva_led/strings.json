@@ -1,0 +1,28 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "HDFury DIVA LED",
+        "description": "Connect to the DIVA HTTP interface.",
+        "data": {
+          "host": "Host",
+          "name": "Name"
+        }
+      },
+      "init": {
+        "title": "HDFury DIVA LED",
+        "description": "Update the DIVA HTTP interface settings.",
+        "data": {
+          "host": "Host",
+          "name": "Name"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to the DIVA."
+    },
+    "abort": {
+      "already_configured": "This DIVA is already configured."
+    }
+  }
+}
