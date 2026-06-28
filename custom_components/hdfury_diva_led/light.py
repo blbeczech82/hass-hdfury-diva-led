@@ -76,6 +76,10 @@ class DivaLedLight(CoordinatorEntity[DivaLedCoordinator], LightEntity):
         rgb_color = kwargs.get(ATTR_RGB_COLOR, self.rgb_color)
         raw_rgb = self._scale_rgb(rgb_color, brightness)
 
+        self.coordinator.async_set_pending_state("ledstripenabled", 1)
+        self.coordinator.async_set_pending_state("ledcolorred", raw_rgb[0])
+        self.coordinator.async_set_pending_state("ledcolorgreen", raw_rgb[1])
+        self.coordinator.async_set_pending_state("ledcolorblue", raw_rgb[2])
         await self.coordinator.api.async_set_many(
             {
                 "ledstripenabled": "on",
@@ -87,11 +91,10 @@ class DivaLedLight(CoordinatorEntity[DivaLedCoordinator], LightEntity):
                 "ledcolorblue": raw_rgb[2],
             }
         )
-        await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
+        self.coordinator.async_set_pending_state("ledstripenabled", 0)
         await self.coordinator.api.async_set("ledstripenabled", "off")
-        await self.coordinator.async_request_refresh()
 
     @property
     def _raw_rgb(self) -> tuple[int, int, int]:

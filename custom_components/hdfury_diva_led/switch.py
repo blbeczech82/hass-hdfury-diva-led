@@ -80,9 +80,33 @@ class DivaLedSwitch(CoordinatorEntity[DivaLedCoordinator], SwitchEntity):
         return value == 1
 
     async def async_turn_on(self, **kwargs: object) -> None:
-        await self.coordinator.api.async_set(self._description.key, self._description.on_value)
-        await self.coordinator.async_request_refresh()
+        self.coordinator.async_set_pending_state(*self._optimistic_state(True))
+        try:
+            await self.coordinator.api.async_set(self._description.key, self._description.on_value)
+        except Exception:
+            await self.coordinator.async_request_refresh()
+            raise
 
     async def async_turn_off(self, **kwargs: object) -> None:
-        await self.coordinator.api.async_set(self._description.key, self._description.off_value)
-        await self.coordinator.async_request_refresh()
+        self.coordinator.async_set_pending_state(*self._optimistic_state(False))
+        try:
+            await self.coordinator.api.async_set(self._description.key, self._description.off_value)
+        except Exception:
+            await self.coordinator.async_request_refresh()
+            raise
+
+    def _optimistic_state(self, is_on: bool) -> tuple[str, int]:
+        key = self._description.state_key or self._description.key
+
+        if self._description.bit is None:
+            return key, int(is_on)
+
+        try:
+            value = int((self.coordinator.data or {}).get(key, 0))
+        except (TypeError, ValueError):
+            value = 0
+
+        mask = 1 << self._description.bit
+        if is_on:
+            return key, value | mask
+        return key, value & ~mask
